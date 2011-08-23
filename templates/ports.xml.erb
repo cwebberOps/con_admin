@@ -1,0 +1,21 @@
+   <ports>
+<% ports.each do |port| %>
+      <port<%= port['number'] %>>
+         <charsize>8</charsize>
+         <flowcontrol>None</flowcontrol>
+         <label><%= port['name'] %></label>
+         <loglevel>2</loglevel>
+         <mode>portmanager</mode>
+         <parity>None</parity>
+         <protocol>RS232</protocol>
+         <speed><%= port['speed'] %></speed>
+         <ssh>on</ssh>
+         <stop>1</stop>
+         <syslog>
+            <facility>Default</facility>
+            <priority>Default</priority>
+         </syslog>
+         <terminal>vt220</terminal>
+      </port<%= port['number'] %>>
+<% end %>
+   </ports>
