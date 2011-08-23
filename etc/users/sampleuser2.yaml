@@ -1,0 +1,10 @@
+--- 
+groups: users
+username: sampleuser2
+ports: 
+- 1
+- 2
+- 3
+- 8
+description: Sample User2
+password: SomePasswordHash
