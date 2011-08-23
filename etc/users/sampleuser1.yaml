@@ -3,6 +3,5 @@ groups:
 - admin
 - users
 username: sampleuser1
-ports: any
 description: Sample User1
 password: SomePasswordHash

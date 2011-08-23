@@ -1,11 +1,5 @@
 --- 
 groups: users
 username: sampleuser3
-ports: 
-- !ruby/range 
-  begin: 1
-  end: 5
-  excl: false
-- 10
 description: Sample User3
 password: SomePasswordHash
