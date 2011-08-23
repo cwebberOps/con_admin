@@ -1,0 +1,111 @@
+   <system>
+      <timezone><%= con['timezone'] %></timezone>
+      <snmp>
+         <protocol>UDP</protocol>
+         <trapport>162</trapport>
+      </snmp>
+      <model><%= con['model'] %></model>
+      <location><%= con['location'] %></location>
+      <name><%= con['name'] %></name>
+      <password><%= con['password'] %></password>
+   </system>
+   <console>
+      <flow>None</flow>
+      <ppp>
+         <auth>None</auth>
+      </ppp>
+      <speed><%= con['console_speed'] %></speed>
+   </console>
+   <services>
+      <https>
+         <enabled>on</enabled>
+      </https>
+      <ssh>
+         <enabled>on</enabled>
+      </ssh>
+      <pingreply>
+         <enabled>on</enabled>
+      </pingreply>
+   </services>
+   <eventlog>
+      <server>
+         <type>None</type>
+      </server>
+   </eventlog>
+   <auth>
+      <type>Local</type>
+   </auth>
+   <powersupplies>
+      <total>1</total>
+   </powersupplies>
+   <groups>
+      <group1>
+         <description>Default system super user group</description>
+         <name>root</name>
+      </group1>
+      <total>6</total>
+      <group2>
+         <description>Provides users with unlimited configuration and management privileges</description>
+         <name>admin</name>
+      </group2>
+      <group3>
+         <description>Provides users with minimal privileges</description>
+         <name>nobody</name>
+      </group3>
+      <group4>
+         <description>Group for users created automatically via network authentication</description>
+         <name>netgrp</name>
+      </group4>
+      <group5>
+         <description>Group to allow serial access to NUT UPS service</description>
+         <name>serial</name>
+      </group5>
+      <group6>
+         <description>Provides users with basic management privileges</description>
+         <name>users</name>
+      </group6>
+   </groups>
+   <interfaces>
+      <wan>
+         <address><%= con['address'] %></address>
+         <dns1><%= con['dns1'] %></dns1>
+         <gateway><%= con['gateway'] %></gateway>
+         <media>Auto</media>
+         <mode>static</mode>
+         <netmask><%= con['netmask'] %></netmask>
+      </wan>
+   </interfaces>
+   <ntp>
+      <enabled>on</enabled>
+      <server><%= con['ntp'] %></server>
+   </ntp>
+   <dashboard>
+      <configured>true</configured>
+      <position1>
+         <type>ups</type>
+      </position1>
+      <position2>
+         <alarm>on</alarm>
+         <amount>6</amount>
+         <enviro>on</enviro>
+         <login>on</login>
+         <pattern>on</pattern>
+         <signal>on</signal>
+         <type>alerts</type>
+         <ups>on</ups>
+      </position2>
+      <position3>
+         <type>rpc</type>
+      </position3>
+      <position4>
+         <amount>4</amount>
+         <type>devices</type>
+      </position4>
+      <position5>
+         <type>emd</type>
+      </position5>
+      <position6>
+         <amount>4</amount>
+         <type>ports</type>
+      </position6>
+   </dashboard>
