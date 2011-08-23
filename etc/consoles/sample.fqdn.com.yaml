@@ -10,3 +10,4 @@ num_ports: 48
 gateway: 192.168.0.1
 password: SomePasswordHash
 dns1: 192.168.0.1
+ntp: 192.168.0.1
