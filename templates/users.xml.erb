@@ -1,0 +1,19 @@
+<% num = 1 -%>
+   <users>
+      <total><%= users.count %></total>
+      <% users.each do |user| -%>
+      <user<%= num %>>
+         <description>user['description']</description>
+         <groups>
+         	<% group_num = 1 -%>
+         	<% user['groups'].each do |group| -%>
+         	<group<%= group_num %>><%= group %></group<%= group_num %>>
+         	<% group_num = group_num + 1 -%>
+         	<% end -%>
+         </groups>
+         <password>user['password']</password>
+         <username>user['username']</username>
+      </user<%= num %>>
+      <% num = num +1 -%>
+      <% end -%>
+   </users>
