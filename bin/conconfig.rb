@@ -3,8 +3,53 @@
 require 'YAML'
 require 'erb'
 require 'pp'
+require 'optparse'
 
-fqdn = 'sample.fqdn.com' # Setting this as a stop gap before adding options
+options = {}
+optparse = OptionParser.new do |opts|
+   opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
+
+   opts.on("-h",
+      "--help",
+      "Display this screen"
+   ) do
+      puts opts
+      exit
+   end
+
+   options[:noop] = false
+   opts.on("-n",
+      "--noop",
+      "Don't make any changes, just output the resultant config."
+   ) do |noop|
+      options[:noop] = noop
+   end
+
+   opts.on("-s",
+      "--server FQDN",
+      "FQDN of console server to be configured"
+   ) do |fqdn|
+      options[:server] = fqdn
+   end
+
+end
+
+begin
+   optparse.parse!
+   mandatory = [:server]
+   missing = mandatory.select{ |param| options[param].nil? }
+   unless missing.empty?
+      puts "Missing options: #{missing.join(', ')}"
+      puts optparse
+      exit 1
+   end
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument
+   puts $!.to_s
+   puts optparse
+   exit 1
+end
+
+fqdn = options[:server] # Setting this as a stop gap before adding options
 
 # Location of templates
 template_dir = File.join(File.dirname(__FILE__), '../templates')
@@ -13,7 +58,12 @@ template_dir = File.join(File.dirname(__FILE__), '../templates')
 con_file = File.join(File.dirname(__FILE__), '../etc/consoles', "#{fqdn}.yaml")
 
 # Pull in the console server config
-con = YAML::load_file(con_file)
+begin
+   con = YAML::load_file(con_file)
+rescue
+   puts "Error: #{con_file} could not be read or does not exist"
+   exit 1
+end
 
 # Location of users
 user_dir = File.join(File.dirname(__FILE__), '../etc/users')
@@ -47,23 +97,37 @@ ports = []
 end
 
 # Template parsing
+config_content = ''
 
 # Deal with the header
 header_tmpl = ERB.new(File.new(File.join(template_dir, 'header.xml.erb')).read)
-puts header_tmpl.result(binding)
+config_content << header_tmpl.result(binding)
 
 # Deal with the console server config
 main_tmpl = ERB.new(File.new(File.join(template_dir, 'main.xml.erb')).read)
-puts main_tmpl.result(binding)
+config_content << main_tmpl.result(binding)
 
 # Deal with the user config
 users_tmpl = ERB.new(File.new(File.join(template_dir, 'users.xml.erb')).read, 0, '>')
-puts users_tmpl.result(binding)
+config_content << users_tmpl.result(binding)
 
 # Port config goes here
 ports_tmpl = ERB.new(File.new(File.join(template_dir, 'ports.xml.erb')).read, 0, '>')
-puts ports_tmpl.result(binding)
+config_content << ports_tmpl.result(binding)
 
 # Deal with the footer
 footer_tmpl = ERB.new(File.new(File.join(template_dir, 'footer.xml.erb')).read)
-puts footer_tmpl.result(binding)
+config_content << footer_tmpl.result(binding)
+
+unless options[:noop]
+
+   # TODO: Ensure that the var directory is writable
+   # TODO: Write out the new config.xml for the console server
+   # TODO: Ensure that the console server can be connected to without a password
+   # TODO: Copy down the current config and store it
+   # TODO: Copy up the new config file
+   # TODO: Run the config parser
+
+else
+   puts config_content
+end
