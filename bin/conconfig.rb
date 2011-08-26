@@ -31,6 +31,20 @@ dir.entries.map do |user_file|
    users << YAML::load_file(File.join(user_dir, user_file))
 end
 
+# Location of ports
+port_dir = File.join(File.dirname(__FILE__), '../etc/ports')
+
+# Create an array to store all of the ports in
+ports = []
+
+# Slurp all of the ports into a single array for processing by the
+# template.
+(1..con['num_ports']).each do |num|
+   port_file = "#{con['name']}.#{num}.yaml"
+   if File.exists?(File.join(port_dir, port_file))
+      ports << YAML::load_file(File.join(port_dir, port_file))
+   end
+end
 
 # Template parsing
 
@@ -47,7 +61,8 @@ users_tmpl = ERB.new(File.new(File.join(template_dir, 'users.xml.erb')).read, 0,
 puts users_tmpl.result(binding)
 
 # Port config goes here
-
+ports_tmpl = ERB.new(File.new(File.join(template_dir, 'ports.xml.erb')).read, 0, '>')
+puts ports_tmpl.result(binding)
 
 # Deal with the footer
 footer_tmpl = ERB.new(File.new(File.join(template_dir, 'footer.xml.erb')).read)
