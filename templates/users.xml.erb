@@ -13,9 +13,9 @@
          </groups>
          <password><%= user['password'] %></password>
          <username><%= user['username'] %></username>
-         <% (1..con['num_ports']).each do |port| %>
+<% (1..con['num_ports']).each do |port| %>
          <port<%= port %>>on</port<%= port %>>
-         <% end %>
+<% end %>
       </user<%= num %>>
 <% num = num +1 %>
 <% end %>
