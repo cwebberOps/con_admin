@@ -4,6 +4,9 @@ require 'YAML'
 require 'erb'
 require 'pp'
 require 'optparse'
+require 'rubygems'
+require 'net/ssh'
+require 'net/scp'
 
 options = {}
 optparse = OptionParser.new do |opts|
@@ -121,7 +124,34 @@ config_content << footer_tmpl.result(binding)
 
 unless options[:noop]
 
-   # TODO: Ensure that the var directory is writable
+   var_dir = File.join(File.dirname(__FILE__), '../var')
+
+   unless File.exists?(var_dir)
+      if File.writeable?(File.join(File.dirname(__FILE__), '..'))
+         Dir.mkdir(var_dir)
+      else
+         puts "Error: Unable to create #{var_dir}"
+         exit 1
+      end
+   end
+
+   if File.directory?(var_dir) && File.writable?(var_dir)
+      host_dir = File.join(var_dir, fqdn)
+      unless File.directory?(host_dir)
+         if File.exists?(host_dir)
+            puts "Error: #{host_dir} is a file and not a direcory"
+            exit 1
+         else
+            Dir.mkdir(host_dir)
+         end
+      end
+      
+      File.open(File.join(host_dir, 'config.xml.new'), 'w') do |file|
+         file.puts config_content
+      end
+      
+   end
+
    # TODO: Write out the new config.xml for the console server
    # TODO: Ensure that the console server can be connected to without a password
    # TODO: Copy down the current config and store it
