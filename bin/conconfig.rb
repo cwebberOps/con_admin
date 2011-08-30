@@ -7,6 +7,7 @@ require 'optparse'
 require 'rubygems'
 require 'net/ssh'
 require 'net/scp'
+require 'time'
 
 options = {}
 optparse = OptionParser.new do |opts|
@@ -125,7 +126,8 @@ config_content << footer_tmpl.result(binding)
 unless options[:noop]
 
    var_dir = File.join(File.dirname(__FILE__), '../var')
-
+   
+   # Ensure that the var dir exists
    unless File.exists?(var_dir)
       if File.writeable?(File.join(File.dirname(__FILE__), '..'))
          Dir.mkdir(var_dir)
@@ -135,6 +137,7 @@ unless options[:noop]
       end
    end
 
+   # Create a dir for the host
    if File.directory?(var_dir) && File.writable?(var_dir)
       host_dir = File.join(var_dir, fqdn)
       unless File.directory?(host_dir)
@@ -146,17 +149,36 @@ unless options[:noop]
          end
       end
       
+      # generate the new config that is going on the box
       File.open(File.join(host_dir, 'config.xml.new'), 'w') do |file|
          file.puts config_content
       end
-      
+   else
+      puts "Error: #{var_dir} is not writable"
+      exit 1
+   end
+   
+   # Grab the current time
+   now = Time.now()
+
+   # Specify the key file
+   key = File.join(File.dirname(__FILE__), '../etc/ssh_keys/id_rsa')
+
+   Net::SSH.start(fqdn, 'root', :keys => key) do |ssh|
+      # Pull down the config file
+      File.open(File.join(host_dir, "config.xml.#{now.year}#{now.month}#{now.day}#{now.hour}#{now.min}"), 'w') do |file|
+         file.puts ssh.exec!('cat /etc/config/config.xml')
+      end
+      # Stage the new config file
+      ssh.exec!("echo '#{config_content}' > /etc/config/config.xml.new")
+      # Move the old config aside
+      ssh.exec!("mv /etc/config/config.xml /etc/config/config.xml.failsafe")
+      # Move the new config into place
+      ssh.exec!("mv /etc/config/config.xml.new /etc/config/config.xml")
+      # Run the configurator
+      ssh.exec!("config --run-all")
    end
 
-   # TODO: Write out the new config.xml for the console server
-   # TODO: Ensure that the console server can be connected to without a password
-   # TODO: Copy down the current config and store it
-   # TODO: Copy up the new config file
-   # TODO: Run the config parser
 
 else
    puts config_content
