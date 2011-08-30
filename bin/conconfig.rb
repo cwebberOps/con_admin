@@ -129,7 +129,7 @@ unless options[:noop]
    
    # Ensure that the var dir exists
    unless File.exists?(var_dir)
-      if File.writeable?(File.join(File.dirname(__FILE__), '..'))
+      if File.writable?(File.join(File.dirname(__FILE__), '..'))
          Dir.mkdir(var_dir)
       else
          puts "Error: Unable to create #{var_dir}"
