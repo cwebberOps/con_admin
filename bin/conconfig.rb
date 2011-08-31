@@ -6,7 +6,6 @@ require 'pp'
 require 'optparse'
 require 'rubygems'
 require 'net/ssh'
-require 'net/scp'
 require 'time'
 
 options = {}
