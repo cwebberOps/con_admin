@@ -1,6 +1,8 @@
 <% num = 1 %>
+<% total = 0 %>
+<% users.each { |user| total = total + 1} %>
    <users>
-      <total><%= users.count %></total>
+      <total><%= total %></total>
 <% users.each do |user| %>
       <user<%= num %>>
          <description><%= user['description'] %></description>
